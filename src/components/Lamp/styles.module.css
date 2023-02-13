@@ -1,0 +1,9 @@
+.content {
+  padding: 1em 0;
+}
+
+.color {
+  display: flex;
+  align-items: center;
+  gap: .25em;
+}

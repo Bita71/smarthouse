@@ -1,0 +1,12 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: 1em 5em; 
+  width: 100%;
+  background-color: beige;
+}
+
+.icon {
+  font-size: 2em;
+  margin-right: .25em;
+}

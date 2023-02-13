@@ -1,0 +1,48 @@
+.content {
+  padding: 1em 0;
+}
+
+.color {
+  display: flex;
+  align-items: center;
+  gap: .25em;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+}
+
+.cleaning {
+  animation: cleaning infinite .5s;
+}
+
+.watering {
+  color: blue;
+  animation: watering infinite 1s;
+}
+
+@keyframes cleaning {
+  0% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(-45deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+
+@keyframes watering {
+  0% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(45deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
