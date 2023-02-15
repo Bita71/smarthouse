@@ -40,7 +40,7 @@ export const Device: FC<Props> = ({
       cover={
         <Image
           className={styles.image}
-          alt={name}
+          alt={name?.toString() || ''}
           src={image}
           height={220}
           width={250}
