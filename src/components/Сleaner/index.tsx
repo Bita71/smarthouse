@@ -1,7 +1,7 @@
 import { VaccumCleaner } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { Device } from "../Device";
 import styles from "./styles.module.css";
 import { UpdateModal } from "../UpdateModal";
@@ -19,6 +19,7 @@ export const Cleaner: FC<VaccumCleaner> = ({
 }) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const queryClient = useQueryClient();
+  const timer = useRef<NodeJS.Timeout>();
 
   const { mutate: updateCleanerMutate, isLoading: isUpdating } = useMutation({
     mutationFn: updateCleaner,
@@ -46,6 +47,7 @@ export const Cleaner: FC<VaccumCleaner> = ({
         lastCleaning: status ? dayjs().toDate() : undefined,
       },
     });
+    clearTimeout(timer.current)
   }, [id, status, updateCleanerMutate]);
   const handleSettingClick = () => {
     setIsEditorOpen(true);
@@ -54,13 +56,6 @@ export const Cleaner: FC<VaccumCleaner> = ({
   const handleEditorClose = () => setIsEditorOpen(false);
 
   const cleaningFinish = dayjs(startCleaning).add(cleaningDuration, "minute");
-  const isOff = dayjs().isAfter(cleaningFinish);
-
-  useEffect(() => {
-    if (!isUpdating && status && isOff) {
-      handlePowerClick();
-    }
-  }, [handlePowerClick, isOff, isUpdating, status]);
 
   return (
     <Device

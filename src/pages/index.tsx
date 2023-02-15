@@ -8,6 +8,8 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 import { CreateModal } from "@/components/CreateModal";
 import { useState } from "react";
 import { getAllCleaners } from "@/helpers/cleaner";
+import { Socket } from "@/components/Socket";
+import { getAllSockets } from "@/helpers/socket";
 
 const { Title } = Typography;
 
@@ -22,12 +24,17 @@ export default function Home() {
     queryKey: ["cleaners"],
     queryFn: () => getAllCleaners(),
   });
+
+  const { data: sockets, isLoading: isLoadingSockets } = useQuery({
+    queryKey: ["sockets"],
+    queryFn: () => getAllSockets(),
+  });
   const handleCreateClick = () => setIsCreateOpen(true);
   const handleCreateClose = () => setIsCreateOpen(false);
 
-  const isLoading = isLoadingLamps || isLoadingCleaners;
+  const isLoading = isLoadingLamps || isLoadingCleaners || isLoadingSockets;
 
-  const isEmpty = !isLoading && !lamps?.length && !cleaners?.length;
+  const isEmpty = !isLoading && !lamps?.length && !cleaners?.length && !sockets?.length;
 
   return (
     <>
@@ -62,14 +69,17 @@ export default function Home() {
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
         )}
-        <DeviceList>
+        {!isLoading && <DeviceList>
           {lamps?.map((lamp) => (
             <Lamp key={lamp.id} {...lamp} />
           ))}
           {cleaners?.map((cleaner) => (
             <Cleaner key={cleaner.id} {...cleaner} />
           ))}
-        </DeviceList>
+          {sockets?.map((socket) => (
+            <Socket key={socket.id} {...socket} />
+          ))}
+        </DeviceList>}
       </main>
     </>
   );

@@ -1,55 +1,43 @@
-import cx from 'classnames';
-import { getColor } from "@/helpers/color";
-import { deleteLamp, updateLamp } from "@/helpers/lamp";
-import { Lamp as LampType } from "@prisma/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Skeleton } from "antd";
+import { Socket as SocketType } from "@prisma/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { FC, useState } from "react";
 import { Device } from "../Device";
 import styles from "./styles.module.css";
 import { UpdateModal } from "../UpdateModal";
+import { deleteSocket, updateSocket } from '@/helpers/socket';
 
-export const Lamp: FC<LampType> = ({
+export const Socket: FC<SocketType> = ({
   name,
   id,
   status,
   lastOn,
   lastOff,
-  colorId,
-  autoStatus,
-  autoStart,
-  autoFinish,
 }) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: color, isLoading: isColorLoading } = useQuery({
-    queryKey: ["color", colorId],
-    queryFn: () => getColor(colorId),
-  });
-
-  const { mutate: updateLampMutate, isLoading: isUpdating } = useMutation({
-    mutationFn: updateLamp,
+  const { mutate: updateSocketMutate, isLoading: isUpdating } = useMutation({
+    mutationFn: updateSocket,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lamps"] });
+      queryClient.invalidateQueries({ queryKey: ["sockets"] });
     },
   });
 
-  const { mutate: deleteLampMutate, isLoading: isDeleting } = useMutation({
-    mutationFn: deleteLamp,
+  const { mutate: deleteSocketMutate, isLoading: isDeleting } = useMutation({
+    mutationFn: deleteSocket,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lamps"] });
+      queryClient.invalidateQueries({ queryKey: ["sockets"] });
     },
   });
 
   const handleDeleteClick = () => {
-    deleteLampMutate(id);
+    deleteSocketMutate(id);
   };
   const handlePowerClick = () => {
-    updateLampMutate({
+    updateSocketMutate({
       id,
-      lamp: {
+      socket: {
         status: !status,
         lastOn: !status ? dayjs().toDate() : undefined,
         lastOff: status ? dayjs().toDate() : undefined,
@@ -64,7 +52,7 @@ export const Lamp: FC<LampType> = ({
 
   return (
     <Device
-      image="/images/lamp.webp"
+      image="/images/socket.png"
       name={name}
       on={status}
       onDeleteClick={handleDeleteClick}
@@ -73,10 +61,9 @@ export const Lamp: FC<LampType> = ({
       isPowering={isUpdating}
       isDeleting={isDeleting}
     >
-      <div className={cx(styles.backlight, { [styles.on]: status })} style={{ backgroundColor: color?.hex }} />
       <UpdateModal
         id={id}
-        type="lamp"
+        type="socket"
         open={isEditorOpen}
         onClose={handleEditorClose}
       />
@@ -94,20 +81,6 @@ export const Lamp: FC<LampType> = ({
       )}
       {!lastOn && !lastOff && (
         <div className={styles.content}>Никогда не включали</div>
-      )}
-      <div className={styles.color}>
-        Цвет:{" "}
-        {isColorLoading ? (
-          <Skeleton.Input active size="small" />
-        ) : (
-          <span style={{ color: color?.hex }}>{color?.name}</span>
-        )}
-      </div>
-      {autoStatus && (
-        <div className={styles.content}>
-          Режим: {dayjs(autoStart).format("HH:mm")}-
-          {dayjs(autoFinish).format("HH:mm")}
-        </div>
       )}
     </Device>
   );

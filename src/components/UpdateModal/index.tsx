@@ -15,6 +15,7 @@ import styles from "./styles.module.css";
 import dayjs, { Dayjs } from "dayjs";
 import { createLamp, getLamp, updateLamp } from "@/helpers/lamp";
 import { getCleaner, updateCleaner } from "@/helpers/cleaner";
+import { getSocket, updateSocket } from "@/helpers/socket";
 
 type DeviceType = "lamp" | "socket" | "cleaner";
 
@@ -67,6 +68,12 @@ export const UpdateModal: FC<Props> = ({ onClose, open, id, type }) => {
     },
   });
 
+  const { data: socket, isLoading: isLoadingSocket } = useQuery({
+    queryKey: ["socket", id],
+    queryFn: () => getSocket(id),
+    enabled: open && isSocket,
+  });
+
   const { data: colors, isLoading: isLoadingColors } = useQuery({
     queryKey: ["colors"],
     queryFn: getAllColors,
@@ -93,6 +100,15 @@ export const UpdateModal: FC<Props> = ({ onClose, open, id, type }) => {
     },
   });
 
+  const { mutate: mutateSocket, isLoading: isSubmitingSocket } = useMutation({
+    mutationFn: updateSocket,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sockets"] });
+      queryClient.invalidateQueries({ queryKey: ["socket", id] });
+      onClose();
+    },
+  });
+
   const handleAutoClick = () => {
     setIsAutoChecked((state) => !state);
   };
@@ -101,7 +117,7 @@ export const UpdateModal: FC<Props> = ({ onClose, open, id, type }) => {
     setIsWaterCleaning((state) => !state);
   };
 
-  const isSubmiting = isSubmitingCleaner || isSubmitingLamp;
+  const isSubmiting = isSubmitingCleaner || isSubmitingLamp || isSubmitingSocket;
 
   const handleSubmit = (values: FormState) => {
     switch (type) {
@@ -131,6 +147,14 @@ export const UpdateModal: FC<Props> = ({ onClose, open, id, type }) => {
           },
         });
         break;
+      case "socket":
+        mutateSocket({
+          id,
+          socket: {
+            name: values.name.trim(),
+          },
+        });
+        break;
       default:
         break;
     }
@@ -138,7 +162,8 @@ export const UpdateModal: FC<Props> = ({ onClose, open, id, type }) => {
 
   const isLoading =
     (isLamp && (isLoadingColors || isLoadingLamp)) ||
-    (isCleaner && isLoadingCleaner);
+    (isCleaner && isLoadingCleaner)
+    || (isSocket && isLoadingSocket);
 
   return (
     <Modal open={open} onCancel={onClose} footer={[]}>
@@ -157,7 +182,7 @@ export const UpdateModal: FC<Props> = ({ onClose, open, id, type }) => {
             autoStart: lamp?.autoStart ? dayjs(lamp?.autoStart) : undefined,
             autoFinish: lamp?.autoFinish ? dayjs(lamp?.autoFinish) : undefined,
             color: lamp?.colorId,
-            name: lamp?.name || cleaner?.name,
+            name: lamp?.name || cleaner?.name || socket?.name,
             cleaningDuration: cleaner?.cleaningDuration
               ? dayjs().startOf("day").add(cleaner?.cleaningDuration, "minute")
               : undefined,

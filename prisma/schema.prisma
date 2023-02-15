@@ -44,9 +44,3 @@ model VaccumCleaner {
   cleaningDuration Int       @default(5)
   lastCleaning     DateTime?
 }
-
-model Curtain {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  name   String
-  status Boolean @default(false)
-}

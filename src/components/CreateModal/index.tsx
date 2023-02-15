@@ -15,6 +15,7 @@ import styles from "./styles.module.css";
 import dayjs, { Dayjs } from "dayjs";
 import { createLamp } from "@/helpers/lamp";
 import { createCleaner } from "@/helpers/cleaner";
+import { createSocket } from "@/helpers/socket";
 
 interface Props {
   open: boolean;
@@ -65,7 +66,6 @@ export const CreateModal: React.FC<Props> = ({ onClose, open }) => {
     setIsWaterCleaning(false);
     form.resetFields();
     onClose();
-
   }
 
   const { mutate: mutateLamp, isLoading: isSubmitingLamp } = useMutation({
@@ -84,7 +84,15 @@ export const CreateModal: React.FC<Props> = ({ onClose, open }) => {
     },
   });
 
-  const isSubmiting = isSubmitingLamp || isSubmitingCleaner;
+  const { mutate: mutateSocket, isLoading: isSubmitingSocket } = useMutation({
+    mutationFn: createSocket,
+    onSuccess: () => {
+      succesCreating();
+      queryClient.invalidateQueries({ queryKey: ["sockets"] });
+    },
+  });
+
+  const isSubmiting = isSubmitingLamp || isSubmitingCleaner || isSubmitingSocket;
 
   const handleAutoClick = () => {
     setIsAutoChecked((state) => !state);
@@ -115,6 +123,11 @@ export const CreateModal: React.FC<Props> = ({ onClose, open }) => {
           name: values.name.trim(),
           waterCleaning: isWaterCleaning,
           cleaningDuration: dayjs(values.cleaningDuration).minute(),
+        });
+        break;
+      case "socket":
+        mutateSocket({
+          name: values.name.trim(),
         });
         break;
       default:
