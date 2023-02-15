@@ -5,10 +5,12 @@ import { Lamp as LampType } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
-import { FC, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Device } from "../Device";
 import styles from "./styles.module.css";
 import { UpdateModal } from "../UpdateModal";
+import { useStoreon } from 'storeon/react';
+import { Events, State } from '@/store';
 
 export const Lamp: FC<LampType> = ({
   name,
@@ -22,6 +24,7 @@ export const Lamp: FC<LampType> = ({
   autoFinish,
 }) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const { time } = useStoreon<State, Events>("time");
   const queryClient = useQueryClient();
 
   const { data: color, isLoading: isColorLoading } = useQuery({
@@ -46,7 +49,7 @@ export const Lamp: FC<LampType> = ({
   const handleDeleteClick = () => {
     deleteLampMutate(id);
   };
-  const handlePowerClick = () => {
+  const handlePowerClick = useCallback(() => {
     updateLampMutate({
       id,
       lamp: {
@@ -55,12 +58,34 @@ export const Lamp: FC<LampType> = ({
         lastOff: status ? dayjs().toDate() : undefined,
       },
     });
-  };
+  }, [id, status, updateLampMutate]);
   const handleSettingClick = () => {
     setIsEditorOpen(true);
   };
 
   const handleEditorClose = () => setIsEditorOpen(false);
+
+
+  useEffect(() => {
+    if (!autoStatus || isUpdating || !autoStart || !autoFinish) {
+      return;
+    }
+
+    const startHour = dayjs(autoStart).hour();
+    const startMinute = dayjs(autoStart).minute();
+    const start = dayjs().startOf('day').add(startHour, 'hour').add(startMinute, 'minute');
+    const finishHour = dayjs(autoFinish).hour();
+    const finishMinute = dayjs(autoFinish).minute();
+    const finish = dayjs().startOf('day').add(finishHour, 'hour').add(finishMinute, 'minute');
+
+    if (!status && time.isAfter(start) && time.isBefore(finish)) {
+      handlePowerClick()
+    }
+
+    if (status && (time.isBefore(start) || time.isAfter(finish))) {
+      handlePowerClick()
+    }
+  }, [autoFinish, autoStart, autoStatus, handlePowerClick, isUpdating, status, time]);
 
   return (
     <Device

@@ -1,12 +1,14 @@
 import { VaccumCleaner } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Device } from "../Device";
 import styles from "./styles.module.css";
 import { UpdateModal } from "../UpdateModal";
 import { deleteCleaner, updateCleaner } from "@/helpers/cleaner";
 import { BgColorsOutlined, ClearOutlined } from "@ant-design/icons";
+import { Events, State } from "@/store";
+import { useStoreon } from "storeon/react";
 
 export const Cleaner: FC<VaccumCleaner> = ({
   name,
@@ -18,6 +20,7 @@ export const Cleaner: FC<VaccumCleaner> = ({
   waterCleaning,
 }) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const { time } = useStoreon<State, Events>("time");
   const queryClient = useQueryClient();
   const timer = useRef<NodeJS.Timeout>();
 
@@ -47,7 +50,7 @@ export const Cleaner: FC<VaccumCleaner> = ({
         lastCleaning: status ? dayjs().toDate() : undefined,
       },
     });
-    clearTimeout(timer.current)
+    clearTimeout(timer.current);
   }, [id, status, updateCleanerMutate]);
   const handleSettingClick = () => {
     setIsEditorOpen(true);
@@ -56,6 +59,18 @@ export const Cleaner: FC<VaccumCleaner> = ({
   const handleEditorClose = () => setIsEditorOpen(false);
 
   const cleaningFinish = dayjs(startCleaning).add(cleaningDuration, "minute");
+
+  useEffect(() => {
+    if (isUpdating) {
+      return;
+    }
+    if (
+      status &&
+      (time.isAfter(cleaningFinish) || time.isSame(cleaningFinish))
+    ) {
+      handlePowerClick();
+    }
+  }, [cleaningFinish, handlePowerClick, isUpdating, status, time]);
 
   return (
     <Device

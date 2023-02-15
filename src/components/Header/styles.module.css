@@ -10,3 +10,15 @@
   font-size: 2em;
   margin-right: .25em;
 }
+
+.disconnect {
+  margin-right: .5em;
+  font-size: 1.5em;
+  color: rgb(125, 54, 54);
+  opacity: 0;
+  transition: opacity .2s linear;
+}
+
+.disconnect.on {
+  opacity: 1;
+}

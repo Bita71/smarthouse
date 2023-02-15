@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Cleaner, DeviceList, Header, Lamp } from "@/components";
+import { Cleaner, DeviceList, Lamp } from "@/components";
 import { Button, Empty, Spin, Typography } from "antd";
 import styles from "@/styles/Home.module.css";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +10,11 @@ import { useState } from "react";
 import { getAllCleaners } from "@/helpers/cleaner";
 import { Socket } from "@/components/Socket";
 import { getAllSockets } from "@/helpers/socket";
+import dynamic from 'next/dynamic'
+
+const HeaderWithNoSSR = dynamic(() => import('../components/Header'), {
+  ssr: false
+})
 
 const { Title } = Typography;
 
@@ -43,7 +48,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header />
+      <HeaderWithNoSSR />
       <main className={styles.main}>
         <div className={styles.title}>
           <CreateModal open={isCreateOpen} onClose={handleCreateClose} />
