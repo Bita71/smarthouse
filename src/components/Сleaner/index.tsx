@@ -101,7 +101,7 @@ export const Cleaner: FC<VaccumCleaner> = ({
         <div className={styles.content}>
           Уборка начата в {dayjs(startCleaning).format("HH:mm")}
           <br />
-          Уборка закончиться в {cleaningFinish.format("HH:mm")}
+          Уборка закончится в {cleaningFinish.format("HH:mm")}
         </div>
       )}
       {!status && lastCleaning && (
