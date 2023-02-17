@@ -26,9 +26,10 @@ export default async function handler(
       case 'PUT': {
         const {
           id,
-          lamp
+          lamp,
+          log
         } = req.body
-        const newLamp = await updateLamp(id, lamp)
+        const newLamp = await updateLamp(id, lamp, log)
         return res.status(200).json(newLamp)
       }
       case 'DELETE': {

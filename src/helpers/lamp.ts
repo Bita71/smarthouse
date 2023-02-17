@@ -4,7 +4,8 @@ import { api } from "./api";
 
 interface UpdateLampProps {
   id: string,
-  lamp: UpdatedLamp
+  lamp: UpdatedLamp,
+  log?: string,
 }
 
 interface CreateLampProps extends Partial<Omit<Lamp, 'id'>> {
@@ -19,9 +20,10 @@ export const createLamp = (lamp: CreateLampProps) => api.post<Lamp>('/api/lamp',
   lamp,
 }).then((data) => data.data)
 
-export const updateLamp = ({ id, lamp }: UpdateLampProps) => api.put<Lamp>('/api/lamp', {
+export const updateLamp = ({ id, lamp, log }: UpdateLampProps) => api.put<Lamp>('/api/lamp', {
   id,
   lamp,
+  log,
 }).then((data) => data.data)
 
 export const deleteLamp = (id: string) => api.delete<Lamp>('/api/lamp', {

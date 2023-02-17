@@ -22,3 +22,10 @@
 .disconnect.on {
   opacity: 1;
 }
+
+.log {
+  display: flex;
+  align-items: center;
+  font-size: 1.5em;
+  margin-left: 1em;
+}

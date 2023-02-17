@@ -46,12 +46,13 @@ export const Cleaner: FC<VaccumCleaner> = ({
       id,
       cleaner: {
         status: !status,
-        startCleaning: !status ? dayjs().toDate() : undefined,
-        lastCleaning: status ? dayjs().toDate() : undefined,
+        startCleaning: !status ? time.toDate() : undefined,
+        lastCleaning: status ? time.toDate() : undefined,
       },
+      log: 'Устройство ' + (!status ? ' включено' : ' выключено'),
     });
     clearTimeout(timer.current);
-  }, [id, status, updateCleanerMutate]);
+  }, [id, status, time, updateCleanerMutate]);
   const handleSettingClick = () => {
     setIsEditorOpen(true);
   };

@@ -24,9 +24,10 @@ export default async function handler(
       case 'PUT': {
         const {
           id,
-          socket
+          socket,
+          log,
         } = req.body
-        const newsocket = await updateSocket(id, socket)
+        const newsocket = await updateSocket(id, socket, log)
         return res.status(200).json(newsocket)
       }
       case 'DELETE': {

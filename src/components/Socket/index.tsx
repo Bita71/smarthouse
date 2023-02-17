@@ -6,6 +6,8 @@ import { Device } from "../Device";
 import styles from "./styles.module.css";
 import { UpdateModal } from "../UpdateModal";
 import { deleteSocket, updateSocket } from '@/helpers/socket';
+import { useStoreon } from "storeon/react";
+import { Events, State } from "@/store";
 
 export const Socket: FC<SocketType> = ({
   name,
@@ -15,6 +17,7 @@ export const Socket: FC<SocketType> = ({
   lastOff,
 }) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const { time } = useStoreon<State, Events>("time");
   const queryClient = useQueryClient();
 
   const { mutate: updateSocketMutate, isLoading: isUpdating } = useMutation({
@@ -39,9 +42,10 @@ export const Socket: FC<SocketType> = ({
       id,
       socket: {
         status: !status,
-        lastOn: !status ? dayjs().toDate() : undefined,
-        lastOff: status ? dayjs().toDate() : undefined,
+        lastOn: !status ? time.toDate() : undefined,
+        lastOff: status ? time.toDate() : undefined,
       },
+      log: 'Устройство ' + (!status ? ' включено' : ' выключено'),
     });
   };
   const handleSettingClick = () => {

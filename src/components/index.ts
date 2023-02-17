@@ -3,3 +3,4 @@ export * from './Device';
 export * from './DeviceList';
 export * from './Lamp';
 export * from './Сleaner';
+export * from './LogsModal';

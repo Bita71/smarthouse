@@ -54,11 +54,12 @@ export const Lamp: FC<LampType> = ({
       id,
       lamp: {
         status: !status,
-        lastOn: !status ? dayjs().toDate() : undefined,
-        lastOff: status ? dayjs().toDate() : undefined,
+        lastOn: !status ? time.toDate() : undefined,
+        lastOff: status ? time.toDate() : undefined,
       },
+      log: 'Устройство ' + (!status ? ' включено' : ' выключено'),
     });
-  }, [id, status, updateLampMutate]);
+  }, [id, status, time, updateLampMutate]);
   const handleSettingClick = () => {
     setIsEditorOpen(true);
   };

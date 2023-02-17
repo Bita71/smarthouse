@@ -135,6 +135,7 @@ export const UpdateModal: FC<Props> = ({ onClose, open, id, type }) => {
               : undefined,
             colorId: values.color,
           },
+          log: 'Найстройки устройства обновлены'
         });
         break;
       case "cleaner":
@@ -145,6 +146,7 @@ export const UpdateModal: FC<Props> = ({ onClose, open, id, type }) => {
             waterCleaning: isWaterCleaning,
             cleaningDuration: dayjs(values.cleaningDuration).minute(),
           },
+          log: 'Найстройки устройства обновлены'
         });
         break;
       case "socket":
@@ -153,6 +155,7 @@ export const UpdateModal: FC<Props> = ({ onClose, open, id, type }) => {
           socket: {
             name: values.name.trim(),
           },
+          log: 'Найстройки устройства обновлены'
         });
         break;
       default:

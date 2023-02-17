@@ -5,6 +5,7 @@ import { api } from "./api";
 interface UpdateSocketProps {
   id: string,
   socket: UpdatedSocket
+  log?: string,
 }
 
 interface CreateSocketProps extends Partial<Omit<Socket, 'id'>> {
@@ -18,9 +19,10 @@ export const createSocket = (socket: CreateSocketProps) => api.post<Socket>('/ap
   socket,
 }).then((data) => data.data)
 
-export const updateSocket = ({ id, socket }: UpdateSocketProps) => api.put<Socket>('/api/socket', {
+export const updateSocket = ({ id, socket, log }: UpdateSocketProps) => api.put<Socket>('/api/socket', {
   id,
   socket,
+  log,
 }).then((data) => data.data)
 
 export const deleteSocket = (id: string) => api.delete<Socket>('/api/socket', {

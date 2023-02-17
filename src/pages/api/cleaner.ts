@@ -24,9 +24,10 @@ export default async function handler(
       case 'PUT': {
         const {
           id,
-          cleaner
+          cleaner,
+          log,
         } = req.body
-        const result = await updateCleaner(id, cleaner)
+        const result = await updateCleaner(id, cleaner, log)
         return res.status(200).json(result)
       }
       case 'DELETE': {

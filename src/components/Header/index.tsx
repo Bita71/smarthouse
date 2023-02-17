@@ -1,15 +1,17 @@
 import { Events, State } from "@/store";
 import cx from "classnames";
-import { ApiOutlined, HeatMapOutlined } from "@ant-design/icons";
-import { TimePicker, Typography } from "antd";
+import { ApiOutlined, HeatMapOutlined, ReadOutlined } from "@ant-design/icons";
+import { Button, TimePicker, Typography } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStoreon } from "storeon/react";
 import styles from "./styles.module.css";
+import { LogsModal } from "../LogsModal";
 
 const { Title } = Typography;
 
 const Header = () => {
+  const [isLogsOpen, setIsLogsOpen] = useState(false);
   const timer = useRef<NodeJS.Timer>();
   const { dispatch, time } = useStoreon<State, Events>("time");
   const { on } = useStoreon<State, Events>("on");
@@ -44,6 +46,9 @@ const Header = () => {
   };
 
   const isNotNow = !dayjs().isSame(time, 'minute');
+
+  const handleLogsOpen = () => setIsLogsOpen(true);
+  const handleLogsClose = () => setIsLogsOpen(false);
   return (
     <header className={styles.header}>
       <HeatMapOutlined className={styles.icon} />
@@ -60,6 +65,10 @@ const Header = () => {
         onOpenChange={handleOpenChange}
         onChange={handleChange}
       />
+      <Button onClick={handleLogsOpen} className={styles.log} type="text">
+        <ReadOutlined />
+      </Button>
+      <LogsModal open={isLogsOpen} onClose={handleLogsClose} />
     </header>
   );
 };

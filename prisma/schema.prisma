@@ -44,3 +44,17 @@ model VaccumCleaner {
   cleaningDuration Int       @default(5)
   lastCleaning     DateTime?
 }
+
+enum LogType {
+  LAMP  @map("lamp")
+  SOCKET   @map("socket")
+  CLEANER   @map("cleaner")
+}
+
+model Log {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  type LogType
+  text String
+  name String
+  time DateTime? @default(now())
+}

@@ -5,6 +5,7 @@ import { api } from "./api";
 interface UpdateCleanerProps {
   id: string,
   cleaner: UpdatedCleaner
+  log?: string,
 }
 
 interface CreateCleanerProps extends UpdatedCleaner {
@@ -18,9 +19,10 @@ export const createCleaner = (cleaner: CreateCleanerProps) => api.post<VaccumCle
   cleaner,
 }).then((data) => data.data)
 
-export const updateCleaner = ({ id, cleaner }: UpdateCleanerProps) => api.put<VaccumCleaner>('/api/cleaner', {
+export const updateCleaner = ({ id, cleaner, log }: UpdateCleanerProps) => api.put<VaccumCleaner>('/api/cleaner', {
   id,
   cleaner,
+  log,
 }).then((data) => data.data)
 
 export const deleteCleaner = (id: string) => api.delete<VaccumCleaner>('/api/cleaner', {
